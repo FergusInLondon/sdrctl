@@ -1,54 +1,56 @@
-## Hamsdr
+# `sdrctl` - network connected radio scanner (WIP)
 
-Software-defined radio scanner.
+A lightweight network daemon for using a RTL SDR a remote radio scanner; built upon the work contained in [porjo/hamsdr](https://github.com/porjo/hamsdr) - the best (and simplest) resource I've seen documenting working with RTL SDR devices in Go.
 
-### Requirements
+The goal is to provide a simple to configure daemon that can be used to control a RTL SDR device and stream received data; one such use case being installation on small systems such as Raspberry Pi Zero's that can be located in inaccessible places. *This isn't an alternative to (the closed-source) WebSDR, but I hope it could form part of a more scalable alternative.*
 
-* rtl-sdr library
+## Progress
 
-### Running
+At the time of amending this README this repository contains the original codebase forked from the above repository, with the addition of some build related niceties. For current progress see the [Github Project](https://github.com/users/FergusInLondon/projects/1/views/1).
 
-Grab one of the [pre-compiled binaries](https://github.com/porjo/hamsdr/releases) for Linux (amd64 or Arm), or compile from source as described below.
+## Running `sdrctl`
 
-The `hamsdr` binary is used in the same way as [rtl_fm](http://kmkeen.com/rtl-demod-guide/) e.g.
+### Building and Installing Pre-Requisites (`librtlsdr`)
+
+The `rtl-sdr` C library is required; the latest-and-greatest can be downloaded from [librtlsdr/librtlsdr](https://github.com/librtlsdr/librtlsdr). The upstream codebase recommended that repository as a source as most distributions contained outdated versions at the time (~2017), nearly 5 years later I'm not sure if that remains the case though.
+
+Assuming you wish to install the library to `/usr/local/rtl-sdr`:
 
 ```
-hamsdr -M wbfm -f 89.1M | play -r 32k -t raw -e s -b 16 -c 1 -V1 -
-```
-
-### Building
-
-Rtl-sdr C library is required. Most Linux distros include `rtl-sdr` and `rtl-sdr-devel` packages, unfortunately they are quite out of date which causes the build to fail - you will need to grab the latest source.
-
-#### Building rtl-sdr
-
-My prefered way of building is as follows:
-
-- download latest RTL SDR source: `git clone https://github.com/librtlsdr/librtlsdr`
-- build and install RTL SDR to /usr/local
-```
-$ cd librtlsdr
-$ mkdir build
-$ cd build
+$ git clone https://github.com/librtlsdr/librtlsdr
+$ mkdir librtlsdr/build && cd librtlsdr/build
 $ cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr/local/rtl-sdr ../
 $ make
 $ sudo make install
 ```
 
-#### Building Hamsdr
+### Building and Running `sdrctl`
 
-- `go get github.com/porjo/hamsdr`
-- ignore compile error: `fatal error: rtl-sdr.h: No such file or directory`
-- cd `$GOPATH/src/github.com/porjo/hamsdr`
-- build Hamsdr against RTL SDR:
+Build and execution is all handled via the `Makefile`; note that by default the Makefile expects `librtlsdr` to be found in `/usr/local/rtl-sdr` - *if this is not the case then override it by providing RTLSDR_PATH as a flag to make*.
+
 ```
-$ CGO_LDFLAGS="-lrtlsdr -L/usr/local/rtl-sdr/lib" \
-  CGO_CPPFLAGS="-I/usr/local/rtl-sdr/include"  \
-  go build
+$ git clone git@github.com:FergusInLondon/sdrctl.git
+$ cd sdrctl
+$ make [RTLSDR_PATH=/path/to/rtlsdr/installation]
+$ make [RTLSDR_PATH=/path/to/rtlsdr/installation] run
+# if you're happy and want to install `sdrctl` to /usr/local/bin/:
+$ sudo make install
 ```
-- Find `hamsdr` binary in current directory
 
+#### Installing `sdrctl`
 
-### Credits
+If the build appears functional and works as expected, then install it via `sudo make install`. This will install the binary in conjunction with a small shell script shim that sets the correct library path for `librtlsdr` prior to execution.
 
-- Code based on `rtl_fm` from [rtl-sdr](https://github.com/keenerd/rtl-sdr) by Kyle Keen (@keenerd).
+```
+# optionally setting either the target dir and/or the librtlsdr dir
+$ sudo make [RTLSDR_PATH=/path/to/rtlsdr/installation][INSTALL_PATH=/path/to/target/dir] install
+```
+
+## Credits
+
+- The project is built upon [porjo/hamsdr](https://github.com/porjo/hamsdr), which provides solid foundations for RTL SDR interactions.
+- In turn, the original works were inspired by `rtl_fm` from [rtl-sdr](https://github.com/keenerd/rtl-sdr) by Kyle Keen (@keenerd).
+
+## License
+
+Licensed under the terms of the **GNU General Public License (v2)** as per the original repository; please see [LICENSE.md](LICENSE.md) for full terms.
