@@ -12,7 +12,7 @@ At the time of amending this README this repository contains the original codeba
 
 ### Building and Installing Pre-Requisites (`librtlsdr`)
 
-The `rtl-sdr` C library is required; the latest-and-greatest can be downloaded from [librtlsdr/librtlsdr](https://github.com/librtlsdr/librtlsdr). The upstream codebase recommended that repository as a source as most distributions contained outdated versions at the time (~2017), nearly 5 years later I'm not sure if that remains the case though.
+The `rtl-sdr` C library is required (and, as a result, `libusb` too); the latest-and-greatest can be downloaded from [librtlsdr/librtlsdr](https://github.com/librtlsdr/librtlsdr). The upstream codebase recommended that repository as a source as most distributions contained outdated versions at the time (~2017), nearly 5 years later I'm not sure if that remains the case though.
 
 Assuming you wish to install the library to `/usr/local/rtl-sdr`:
 

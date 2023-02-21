@@ -12,7 +12,7 @@ clean:
 	rm -f ./sdrctl
 
 run:
-	LD_LIBRARY_PATH=$(RTLSDR_PATH)/lib/ ./sdrctl
+	LD_LIBRARY_PATH=$(RTLSDR_PATH)/lib/ ./sdrctl -c example.ini
 
 install:
 	cp sdrctl $(INSTALL_PATH)/sdrctl.bin
